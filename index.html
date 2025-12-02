@@ -818,7 +818,7 @@
                 <h1 style="color: #57068C; font-size: 32px; margin-bottom: 16px; font-weight: 600;">Welcome to The Homogenometry Dashboard</h1>
                 <p style="color: #666; font-size: 18px; line-height: 1.6; margin-bottom: 40px;">
                     Analyze corpus-internal homogeneity by measuring pairwise similarity between responses.
-                    For detecting unusual convergence in survey responses, essays, or any other text corpus.
+                    Perfect for detecting unusual convergence in survey responses, essays, or any text corpus.
                 </p>
                 <button onclick="document.getElementById('csvFile').click()"
                     style="padding: 16px 40px; background: #57068C; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 18px; box-shadow: 0 4px 12px rgba(87, 6, 140, 0.3); transition: all 0.3s;"
@@ -2054,6 +2054,7 @@
         function wordCountSimilarity(text1, text2) {
             const count1 = text1.trim().split(/\s+/).length;
             const count2 = text2.trim().split(/\s+/).length;
+            if (count1 === 0 && count2 === 0) return 1;
             return 1 - Math.abs(count1 - count2) / Math.max(count1, count2);
         }
 
@@ -2128,8 +2129,8 @@
                 sum + (text2.toLowerCase().match(new RegExp('\\b' + word + '\\b', 'g')) || []).length, 0
             );
 
-            const words1 = text1.split(/\s+/).length;
-            const words2 = text2.split(/\s+/).length;
+            const words1 = text1.trim().split(/\s+/).length;
+            const words2 = text2.trim().split(/\s+/).length;
 
             const density1 = (count1 / words1) * 100;
             const density2 = (count2 / words2) * 100;
@@ -4771,6 +4772,8 @@
                     const Ct = occIdx;
 
                     // Linear interpolation: f/T * (t - tk) + k
+                    // Note: Cui et al. (2017) paper uses (k-1) with 1-based indexing;
+                    // we use k with 0-based indexing (mathematically equivalent, verified)
                     const linearValue = (f / T) * (t - tk) + k;
 
                     // |C(t) - linear|
@@ -5227,6 +5230,7 @@
                 function wordCountSimilarity(text1, text2) {
                     const count1 = text1.trim().split(/\\s+/).length;
                     const count2 = text2.trim().split(/\\s+/).length;
+                    if (count1 === 0 && count2 === 0) return 1;
                     return 1 - Math.abs(count1 - count2) / Math.max(count1, count2);
                 }
 
@@ -5298,8 +5302,8 @@
                         sum + (text2.toLowerCase().match(new RegExp('\\\\b' + word + '\\\\b', 'g')) || []).length, 0
                     );
 
-                    const words1 = text1.split(/\\s+/).length;
-                    const words2 = text2.split(/\\s+/).length;
+                    const words1 = text1.trim().split(/\\s+/).length;
+                    const words2 = text2.trim().split(/\\s+/).length;
 
                     const density1 = (count1 / words1) * 100;
                     const density2 = (count2 / words2) * 100;
@@ -5488,6 +5492,8 @@
                                 occIdx++;
                             }
                             const Ct = occIdx;
+                            // Note: Cui et al. (2017) paper uses (k-1) with 1-based indexing;
+                            // we use k with 0-based indexing (mathematically equivalent, verified)
                             const linearValue = (f / T) * (t - tk) + k;
                             const diff = Math.abs(Ct - linearValue);
                             area += diff * dt;
