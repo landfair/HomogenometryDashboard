@@ -908,7 +908,35 @@
                 <h1 style="color: #57068C; font-size: 32px; margin-bottom: 16px; font-weight: 600;">Welcome to The Homogenometry Dashboard</h1>
                 <p style="color: #666; font-size: 18px; line-height: 1.6; margin-bottom: 40px;">
                     Analyze corpus-internal homogeneity by measuring pairwise similarity between responses.
-                    For detecting unusual convergence in survey responses, essays, homework exercises, or any other corpus of texts. 
+                    For detecting unusual convergence in survey responses, essays, homework exercises, or any other corpus of texts.
+                </p>
+                <button onclick="showMetricSelection()"
+                    style="padding: 16px 40px; background: #57068C; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 18px; box-shadow: 0 4px 12px rgba(87, 6, 140, 0.3); transition: all 0.3s;"
+                    onmouseover="this.style.background='#6d0aac'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 16px rgba(87, 6, 140, 0.4)'"
+                    onmouseout="this.style.background='#57068C'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(87, 6, 140, 0.3)'">
+                    <i class="fas fa-sliders-h"></i> Choose Similarity Metrics
+                </button>
+                <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196f3; text-align: left;">
+                    <h4 style="margin-top: 0; color: #1565c0; font-size: 16px;">Getting Started</h4>
+                    <ol style="color: #666; font-size: 14px; line-height: 1.8; margin: 10px 0;">
+                        <li><strong>Choose which similarity metrics</strong> you want to use (21 available)</li>
+                        <li><strong>Upload your CSV file</strong> with text responses</li>
+                        <li><strong>Review results</strong> showing suspicious similarity patterns</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Prompt Screen (shown after metrics selected) -->
+        <div id="uploadPromptScreen" style="display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center; padding: 40px 20px;">
+            <div style="max-width: 600px;">
+                <div style="font-size: 48px; margin-bottom: 20px; color: #4caf50;">✓</div>
+                <h2 style="color: #57068C; font-size: 28px; margin-bottom: 16px; font-weight: 600;">Metrics Configured</h2>
+                <p style="color: #666; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+                    <span id="selectedMetricCount">0</span> metrics selected and ready to analyze.
+                </p>
+                <p style="color: #666; font-size: 18px; line-height: 1.6; margin-bottom: 40px;">
+                    Now upload your CSV file to begin analysis.
                 </p>
                 <button onclick="document.getElementById('csvFile').click()"
                     style="padding: 16px 40px; background: #57068C; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 18px; box-shadow: 0 4px 12px rgba(87, 6, 140, 0.3); transition: all 0.3s;"
@@ -924,6 +952,12 @@
                         <li>Include one or more text response columns to analyze</li>
                         <li>UTF-8 encoding recommended for special characters</li>
                     </ul>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button onclick="showMetricSelection()"
+                        style="padding: 8px 20px; background: transparent; color: #57068C; border: 2px solid #57068C; border-radius: 5px; cursor: pointer; font-weight: 600;">
+                        <i class="fas fa-edit"></i> Change Metrics
+                    </button>
                 </div>
             </div>
         </div>
@@ -965,7 +999,7 @@
                     <div style="margin-bottom: 20px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
                         <strong style="color: #1565c0;">Weight Guidelines:</strong>
                         <div style="font-size: 12px; color: #555; margin-top: 5px;">
-                            High (3.0+): Strong evidence of copying/paraphrasing (fuzzy matching, n-grams)<br>
+                            High (3.0+): Precise textual overlap (fuzzy matching, n-grams)<br>
                             Medium (1.0): Content similarity (cosine, Jaccard, NER)<br>
                             Low (0.3): Structural similarity (word count, sentence length)
                         </div>
@@ -1127,7 +1161,7 @@
                             <input type="checkbox" id="metric_wordNgram" checked onchange="toggleMetricWeight('wordNgram')">
                             <div style="flex: 1; margin-left: 10px;">
                                 <strong>3-Word Phrases</strong>
-                                <div style="font-size: 12px; color: #666;">Word-level n-grams - MEDIUM-HIGH signal</div>
+                                <div style="font-size: 12px; color: #666;">Word-level n-gram overlap</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px; min-width: 220px;">
                                 <label style="font-size: 12px; color: #666; min-width: 60px;">Weight:</label>
@@ -1157,7 +1191,7 @@
                             <input type="checkbox" id="metric_ngram5" checked onchange="toggleMetricWeight('ngram5')">
                             <div style="flex: 1; margin-left: 10px;">
                                 <strong>N-gram 5-char</strong>
-                                <div style="font-size: 12px; color: #666;">5-character sequences - MEDIUM-HIGH signal</div>
+                                <div style="font-size: 12px; color: #666;">5-character sequence overlap</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px; min-width: 220px;">
                                 <label style="font-size: 12px; color: #666; min-width: 60px;">Weight:</label>
@@ -1187,7 +1221,7 @@
                             <input type="checkbox" id="metric_fuzzyNgram3" onchange="toggleMetricWeight('fuzzyNgram3')">
                             <div style="flex: 1; margin-left: 10px;">
                                 <strong>Fuzzy 3-Word Phrases</strong>
-                                <div style="font-size: 12px; color: #666;">Levenshtein ≤5 edits - catches short paraphrasing - MEDIUM-HIGH signal</div>
+                                <div style="font-size: 12px; color: #666;">Levenshtein ≤5 edits on 3-word sequences</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px; min-width: 220px;">
                                 <label style="font-size: 12px; color: #666; min-width: 60px;">Weight:</label>
@@ -1202,7 +1236,7 @@
                             <input type="checkbox" id="metric_fuzzyNgram6" onchange="toggleMetricWeight('fuzzyNgram6')">
                             <div style="flex: 1; margin-left: 10px;">
                                 <strong>Fuzzy 6-Word Phrases</strong>
-                                <div style="font-size: 12px; color: #666;">Levenshtein ≤13 edits - detects longer paraphrasing - MEDIUM-HIGH signal</div>
+                                <div style="font-size: 12px; color: #666;">Levenshtein ≤13 edits on 6-word sequences</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px; min-width: 220px;">
                                 <label style="font-size: 12px; color: #666; min-width: 60px;">Weight:</label>
@@ -1217,7 +1251,7 @@
                             <input type="checkbox" id="metric_wordLevelFuzzy3" checked onchange="toggleMetricWeight('wordLevelFuzzy3')">
                             <div style="flex: 1; margin-left: 10px;">
                                 <strong>Word-Level 3-Word Phrases</strong>
-                                <div style="font-size: 12px; color: #666;">Word substitutions ≤1 - catches "helping" → "aiding" - VERY HIGH signal</div>
+                                <div style="font-size: 12px; color: #666;">Word substitutions ≤1 in 3-word sequences</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px; min-width: 220px;">
                                 <label style="font-size: 12px; color: #666; min-width: 60px;">Weight:</label>
@@ -1232,7 +1266,7 @@
                             <input type="checkbox" id="metric_wordLevelFuzzy5" checked onchange="toggleMetricWeight('wordLevelFuzzy5')">
                             <div style="flex: 1; margin-left: 10px;">
                                 <strong>Word-Level 5-Word Phrases</strong>
-                                <div style="font-size: 12px; color: #666;">Word substitutions ≤2 - detects phrase-level paraphrasing - VERY HIGH signal</div>
+                                <div style="font-size: 12px; color: #666;">Word substitutions ≤2 in 5-word sequences</div>
                             </div>
                             <div style="display: flex; align-items: center; gap: 10px; min-width: 220px;">
                                 <label style="font-size: 12px; color: #666; min-width: 60px;">Weight:</label>
@@ -1241,16 +1275,76 @@
                                 <span id="weightDisplay_wordLevelFuzzy5" style="min-width: 35px; font-weight: 600; font-size: 13px;">3.0</span>
                             </div>
                         </div>
+
+                        <!-- AI-Powered Semantic Similarity (Transformers.js) -->
+                        <div style="margin-top: 20px; padding: 12px; background: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                <strong>AI Model:</strong> Auto-loading 23 MB model (one-time download from CDN)
+                            </div>
+                            <button onclick="initTransformers()" id="enableTransformersBtn"
+                                style="padding: 8px 16px; background: #f0f0f0; color: #333; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; font-size: 12px; margin-bottom: 8px;">
+                                <i class="fas fa-download"></i> Retry Download
+                            </button>
+                            <div id="transformersStatus" style="font-size: 11px; color: #666;">
+                                <i class="fas fa-spinner fa-spin"></i> Loading automatically...
+                            </div>
+                        </div>
+
+                        <!-- Transformer Semantic Similarity -->
+                        <div style="display: flex; align-items: center; padding: 12px; border: 1px solid #e0e0e0; border-radius: 5px; background: #fafafa;">
+                            <input type="checkbox" id="metric_transformerSemantic" disabled onchange="toggleMetricWeight('transformerSemantic')">
+                            <div style="flex: 1; margin-left: 10px;">
+                                <strong><i class="fas fa-sparkles" style="color: #ffd700; margin-right: 6px;"></i>Transformer Semantic Similarity</strong>
+                                <div style="font-size: 12px; color: #666;">AI-powered semantic meaning comparison using neural networks</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; min-width: 220px;">
+                                <label style="font-size: 12px; color: #666; min-width: 60px;">Weight:</label>
+                                <input type="range" id="weight_transformerSemantic" min="0.1" max="5.0" step="0.1" value="3.5"
+                                       style="flex: 1;" oninput="updateWeightDisplay('transformerSemantic', this.value)">
+                                <span id="weightDisplay_transformerSemantic" style="min-width: 35px; font-weight: 600; font-size: 13px;">3.5</span>
+                            </div>
+                        </div>
+
+                        <!-- Syntactic Pattern Similarity -->
+                        <div style="display: flex; align-items: center; padding: 12px; border: 1px solid #e0e0e0; border-radius: 5px; background: #fafafa;">
+                            <input type="checkbox" id="metric_posSyntactic" checked onchange="toggleMetricWeight('posSyntactic')">
+                            <div style="flex: 1; margin-left: 10px;">
+                                <strong>Syntactic Pattern Similarity</strong>
+                                <div style="font-size: 12px; color: #666;">Sentence structure comparison using part-of-speech tagging</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; min-width: 220px;">
+                                <label style="font-size: 12px; color: #666; min-width: 60px;">Weight:</label>
+                                <input type="range" id="weight_posSyntactic" min="0.1" max="5.0" step="0.1" value="2.5"
+                                       style="flex: 1;" oninput="updateWeightDisplay('posSyntactic', this.value)">
+                                <span id="weightDisplay_posSyntactic" style="min-width: 35px; font-weight: 600; font-size: 13px;">2.5</span>
+                            </div>
+                        </div>
+
+                        <!-- Function Word Distribution Similarity -->
+                        <div style="display: flex; align-items: center; padding: 12px; border: 1px solid #e0e0e0; border-radius: 5px; background: #fafafa;">
+                            <input type="checkbox" id="metric_functionWordDist" checked onchange="toggleMetricWeight('functionWordDist')">
+                            <div style="flex: 1; margin-left: 10px;">
+                                <strong>Function Word Distribution (NLP)</strong>
+                                <div style="font-size: 12px; color: #666;">Grammatical word usage patterns using POS tagging</div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 10px; min-width: 220px;">
+                                <label style="font-size: 12px; color: #666; min-width: 60px;">Weight:</label>
+                                <input type="range" id="weight_functionWordDist" min="0.1" max="5.0" step="0.1" value="2.0"
+                                       style="flex: 1;" oninput="updateWeightDisplay('functionWordDist', this.value)">
+                                <span id="weightDisplay_functionWordDist" style="min-width: 35px; font-weight: 600; font-size: 13px;">2.0</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center;">
-                        <div style="font-size: 13px; color: #666; font-style: italic;">
-                            Click "Apply Metrics" to recalculate with your selected metrics
+                        <div id="metricModalFooterText" style="font-size: 13px; color: #666; font-style: italic;">
+                            Select your metrics and click "Continue" to proceed
                         </div>
                         <div style="display: flex; gap: 10px;">
                             <button onclick="saveMetricSettings()"
+                                id="metricApplyBtn"
                                 style="padding: 10px 24px; background: #57068C; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 14px;">
-                                Apply Metrics
+                                Continue
                             </button>
                             <button onclick="toggleMetricSettings()"
                                 style="padding: 10px 24px; background: #95a5a6; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; font-size: 14px;">
@@ -1290,15 +1384,14 @@
                         <li><strong>Narrow focus:</strong> Only detects one specific source (e.g., AI) rather than any form of similarity</li>
                     </ul>
                     <p style="font-size: 14px; line-height: 1.6; color: #555;">
-                        <strong>Homogeneity analysis is different:</strong> It doesn't care <em>why</em> responses are similar—whether from
-                        AI use, copying, collaboration, or shared sources. It simply identifies pairs showing unusual convergence in vocabulary,
-                        phrasing, and structure. This makes it model-agnostic, future-proof, and equally effective at catching copying between
-                        humans as AI-assisted writing.
+                        <strong>Homogeneity analysis is different:</strong> It doesn't make claims about <em>why</em> responses are similar.
+                        It objectively measures pairwise similarity across multiple dimensions of text, identifying pairs showing unusual convergence
+                        in vocabulary, phrasing, and structure. This makes it model-agnostic and applicable to any text corpus.
                     </p>
 
                     <h4 style="color: #57068C; margin-top: 25px;">How It Works</h4>
                     <p style="font-size: 14px; line-height: 1.6; color: #555;">
-                        The analyzer computes pairwise similarity between all responses using 18 distinct metrics, each capturing different
+                        The analyzer computes pairwise similarity between all responses using 21 distinct metrics, each capturing different
                         aspects of textual similarity. All metrics can be enabled/disabled and weighted via Metric Settings.
                     </p>
 
@@ -1347,7 +1440,7 @@
                             <strong>5. N-gram Similarity (5-character)</strong> - Uses 5-character sequences for even more specific pattern matching.
                         </p>
                         <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
-                            <strong>Example:</strong> Useful for detecting copy-paste of unique phrases or technical terms like "photosynthesis."
+                            <strong>Example:</strong> Identifies overlap in unique phrases or technical terms like "photosynthesis."
                         </div>
 
                         <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
@@ -1363,21 +1456,19 @@
 
                     <div style="margin-left: 15px;">
                         <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
-                            <strong>7. Word N-gram (3-word phrases)</strong> - Identifies shared 3-word sequences. Excellent for detecting copied phrases
-                            and sentence fragments.
+                            <strong>7. Word N-gram (3-word phrases)</strong> - Identifies shared 3-word sequences.
                         </p>
                         <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
-                            <strong>Example:</strong> "In other words" appears in both texts. "The main argument" appears in both. Indicates
-                            similar phrasing patterns or direct copying.
+                            <strong>Example:</strong> "In other words" appears in both texts. "The main argument" appears in both.
                         </div>
                     </div>
 
-                    <h5 style="color: #57068C; margin-top: 20px; margin-bottom: 10px; font-size: 15px;">Fuzzy Matching Metrics (Paraphrase Detection)</h5>
+                    <h5 style="color: #57068C; margin-top: 20px; margin-bottom: 10px; font-size: 15px;">Fuzzy Matching Metrics (Approximate String Matching)</h5>
 
                     <div style="margin-left: 15px;">
                         <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
                             <strong>8. Fuzzy N-gram (3-word phrases, ≤5 character edits)</strong> - Compares 3-word phrases allowing up to 5 character
-                            differences via Levenshtein distance. Catches light paraphrasing.
+                            differences via Levenshtein distance.
                         </p>
                         <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
                             <strong>Example:</strong> "the primary argument" matches "the main argument" (5 character changes: "primary" → "main").
@@ -1385,7 +1476,6 @@
 
                         <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
                             <strong>9. Fuzzy N-gram (6-word phrases, ≤13 character edits)</strong> - Longer phrases with more tolerance for changes.
-                            Detects more extensive paraphrasing.
                         </p>
                         <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
                             <strong>Example:</strong> "In conclusion we can see that education" matches "In summary we observe that schooling"
@@ -1394,7 +1484,7 @@
 
                         <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
                             <strong>10. Word-Level Fuzzy (3-word phrases, ≤1 word substitution)</strong> - Compares 3-word phrases allowing exactly
-                            1 word to differ. Detects single-word paraphrasing.
+                            1 word to differ.
                         </p>
                         <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
                             <strong>Example:</strong> "climate change impacts" matches "climate change effects" (1 word different: impacts → effects).
@@ -1402,7 +1492,7 @@
 
                         <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
                             <strong>11. Word-Level Fuzzy (5-word phrases, ≤2 word substitutions)</strong> - Longer phrases allowing up to 2 words
-                            to differ. Catches multi-word paraphrasing.
+                            to differ.
                         </p>
                         <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
                             <strong>Example:</strong> "the study reveals important findings about" matches "this research shows significant results regarding"
@@ -1427,8 +1517,7 @@
                             and complexity.
                         </p>
                         <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
-                            <strong>Example:</strong> Text A averages 18.3 words/sentence, Text B averages 18.7 words/sentence. Similar sentence
-                            length patterns suggest similar writing styles or shared sources.
+                            <strong>Example:</strong> Text A averages 18.3 words/sentence, Text B averages 18.7 words/sentence.
                         </div>
 
                         <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
@@ -1449,8 +1538,7 @@
                             Reflects perspective and voice.
                         </p>
                         <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
-                            <strong>Example:</strong> Text A: 12% pronouns (first-person narrative). Text B: 2% pronouns (formal academic). Very different
-                            writing styles. Similarity indicates shared voice or perspective.
+                            <strong>Example:</strong> Text A: 12% pronouns (first-person narrative). Text B: 2% pronouns (formal academic).
                         </div>
 
                         <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
@@ -1458,8 +1546,7 @@
                             for example, in other words, etc.). Reflects rhetorical sophistication and organization.
                         </p>
                         <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
-                            <strong>Example:</strong> Text A uses 15 transition phrases in 500 words (3.0%). Text B uses 14 in 480 words (2.9%). Similar
-                            usage patterns suggest similar rhetorical training or shared source material.
+                            <strong>Example:</strong> Text A uses 15 transition phrases in 500 words (3.0%). Text B uses 14 in 480 words (2.9%).
                         </div>
                     </div>
 
@@ -1468,11 +1555,9 @@
                     <div style="margin-left: 15px;">
                         <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
                             <strong>17. Named Entity Recognition (NER)</strong> - Identifies and compares proper nouns (people, places, organizations).
-                            Shared entities indicate common source material or topics.
                         </p>
                         <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
-                            <strong>Example:</strong> Both texts mention "Stanford University," "John Dewey," and "Department of Education." High entity
-                            overlap suggests citing the same sources or discussing identical examples.
+                            <strong>Example:</strong> Both texts mention "Stanford University," "John Dewey," and "Department of Education."
                         </div>
 
                         <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
@@ -1481,12 +1566,54 @@
                         </p>
                         <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
                             <strong>Example:</strong> Text A uses "democracy" clustered in the introduction (bursty, μ=0.8). Text B uses "democracy"
-                            evenly throughout (distributed, μ=0.2). Similar burstiness patterns suggest similar organizational strategies or copied structure.
+                            evenly throughout (distributed, μ=0.2).
+                        </div>
+
+                        <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
+                            <strong>19. AI Semantic Similarity (Transformers.js)</strong> - Uses neural network embeddings to measure semantic meaning similarity
+                            independent of vocabulary overlap.
+                        </p>
+                        <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
+                            <strong>Example:</strong> "The economy is improving rapidly" vs. "Economic conditions are getting better quickly" - different words,
+                            same meaning. The AI model recognizes these as semantically equivalent (90%+ similarity).
+                        </div>
+
+                        <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
+                            <strong>20. Syntactic Pattern Similarity (POS Tagging)</strong> - Analyzes sentence structure using part-of-speech tags to measure
+                            grammatical pattern overlap.
+                        </p>
+                        <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
+                            <strong>Example:</strong> "The quick cat jumped" (DET-ADJ-NOUN-VERB) vs. "A fast dog ran" (DET-ADJ-NOUN-VERB) - same syntactic
+                            structure pattern.
+                        </div>
+
+                        <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
+                            <strong>21. Function Word Distribution (NLP)</strong> - Measures similarity in usage of grammatical "glue words" (the, of, and, to, etc.).
+                        </p>
+                        <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #666;">
+                            <strong>Example:</strong> Both texts use "the" at 5.1%, "of" at 3.2%, "and" at 2.8%.
                         </div>
                     </div>
 
+                    <h5 style="color: #57068C; margin-top: 20px; margin-bottom: 10px; font-size: 15px;">Libraries & Technologies</h5>
+
+                    <div style="margin-left: 15px;">
+                        <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
+                            <strong>Compromise.js</strong> - Bundled locally (322 KB). Provides POS tagging and NLP analysis for syntactic patterns
+                            and function word detection. No external network request required.
+                        </p>
+                        <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
+                            <strong>Transformers.js</strong> - Downloads AI model from CDN (23 MB, one-time, cached by browser). Uses the
+                            Xenova/all-MiniLM-L6-v2 model for semantic similarity analysis.
+                        </p>
+                        <p style="font-size: 13px; line-height: 1.6; color: #555; margin-bottom: 10px;">
+                            <strong>Web Workers</strong> - Parallel processing for performance. Metrics that require NLP libraries (Compromise.js)
+                            run in the main thread to access the libraries.
+                        </p>
+                    </div>
+
                     <p style="font-size: 13px; line-height: 1.6; color: #555; margin-top: 20px; font-style: italic;">
-                        All 18 metrics are combined using weighted averaging with min-max normalization. Configure which metrics to use
+                        All 21 metrics are combined using weighted averaging with min-max normalization. Configure which metrics to use
                         and their relative weights via the Metric Settings button in the header menu.
                     </p>
 
@@ -1788,6 +1915,301 @@
         </div>
     </div>
 
+    <!-- Compromise.js for POS Tagging and Syntactic Analysis (Local) -->
+    <script src="./libs/compromise.min.js"></script>
+
+    <!-- Transformers.js Module Script -->
+    <script type="module">
+        import { pipeline } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0';
+
+        // Global state for Transformers.js
+        window.transformersEnabled = false;
+        window.semanticModel = null;
+        window.transformersLoading = false;
+
+        // Initialize semantic similarity model
+        window.initTransformers = async function() {
+            if (window.transformersLoading || window.transformersEnabled) {
+                return;
+            }
+
+            window.transformersLoading = true;
+            const statusDiv = document.getElementById('transformersStatus');
+
+            try {
+                if (statusDiv) {
+                    statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading AI model from CDN (23 MB, one-time, cached by browser)...';
+                    statusDiv.style.color = '#f39c12';
+                }
+
+                // Load semantic similarity model (all-MiniLM-L6-v2)
+                window.semanticModel = await pipeline(
+                    'feature-extraction',
+                    'Xenova/all-MiniLM-L6-v2',
+                    { quantized: true }
+                );
+
+                window.transformersEnabled = true;
+                window.transformersLoading = false;
+
+                if (statusDiv) {
+                    statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Deep semantic analysis enabled!';
+                    statusDiv.style.color = '#27ae60';
+                }
+
+                // Enable and check the checkbox by default
+                const checkbox = document.getElementById('metric_transformerSemantic');
+                if (checkbox) {
+                    checkbox.disabled = false;
+                    checkbox.checked = true; // Auto-enable the metric
+                }
+
+                console.log('Transformers.js ready! Semantic model loaded.');
+            } catch (error) {
+                console.error('Failed to load Transformers.js:', error);
+                window.transformersLoading = false;
+
+                if (statusDiv) {
+                    statusDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to load model. Check internet connection.';
+                    statusDiv.style.color = '#e74c3c';
+                }
+            }
+        };
+
+        // Semantic similarity using transformer embeddings
+        window.transformerSemanticSimilarity = async function(text1, text2) {
+            if (!window.transformersEnabled || !window.semanticModel) {
+                return 0;
+            }
+
+            try {
+                // Generate embeddings for both texts
+                const embedding1 = await window.semanticModel(text1, {
+                    pooling: 'mean',
+                    normalize: true
+                });
+
+                const embedding2 = await window.semanticModel(text2, {
+                    pooling: 'mean',
+                    normalize: true
+                });
+
+                // Calculate cosine similarity (dot product of normalized vectors)
+                let dotProduct = 0;
+                const data1 = embedding1.data;
+                const data2 = embedding2.data;
+
+                for (let i = 0; i < data1.length; i++) {
+                    dotProduct += data1[i] * data2[i];
+                }
+
+                // Clamp to [0, 1] range
+                return Math.max(0, Math.min(1, dotProduct));
+            } catch (error) {
+                console.error('Error calculating transformer similarity:', error);
+                return 0;
+            }
+        };
+
+        console.log('Transformers.js module loaded and ready.');
+    </script>
+
+    <!-- POS Tag Sequence Similarity Functions -->
+    <script>
+        // Extract POS tag n-grams from text using Compromise.js
+        function extractPOSNgrams(text, n = 3) {
+            if (!window.nlp) {
+                console.warn('Compromise.js not loaded');
+                return new Set();
+            }
+
+            try {
+                // Parse text with Compromise
+                const doc = nlp(text);
+                const terms = doc.terms();
+                const posTags = [];
+
+                // Process each term using Compromise's built-in tag methods
+                for (let i = 0; i < terms.length; i++) {
+                    const term = doc.terms().eq(i);
+
+                    // Use Compromise's tag matching for reliable POS detection
+                    if (term.has('#Noun')) {
+                        posTags.push('NOUN');
+                    } else if (term.has('#Verb')) {
+                        posTags.push('VERB');
+                    } else if (term.has('#Adjective')) {
+                        posTags.push('ADJ');
+                    } else if (term.has('#Adverb')) {
+                        posTags.push('ADV');
+                    } else if (term.has('#Pronoun')) {
+                        posTags.push('PRON');
+                    } else if (term.has('#Preposition')) {
+                        posTags.push('PREP');
+                    } else if (term.has('#Conjunction')) {
+                        posTags.push('CONJ');
+                    } else if (term.has('#Determiner')) {
+                        posTags.push('DET');
+                    } else if (term.has('#Value') || term.has('#Number')) {
+                        posTags.push('NUM');
+                    } else {
+                        posTags.push('OTHER');
+                    }
+                }
+
+                // Create n-grams from POS sequence
+                const ngrams = new Set();
+                for (let i = 0; i <= posTags.length - n; i++) {
+                    const ngram = posTags.slice(i, i + n).join('-');
+                    ngrams.add(ngram);
+                }
+
+                console.log(`POS extraction: ${posTags.length} tags, ${ngrams.size} ${n}-grams`);
+                console.log(`Sample POS sequence (first 30): ${posTags.slice(0, 30).join(' ')}`);
+                return ngrams;
+            } catch (error) {
+                console.error('Error extracting POS n-grams:', error);
+                return new Set();
+            }
+        }
+
+        // Calculate POS tag sequence similarity between two texts
+        function posTagSequenceSimilarity(text1, text2, n = 3) {
+            if (!window.nlp) {
+                console.warn('POS similarity: Compromise.js not loaded');
+                return 0; // Library not loaded
+            }
+
+            try {
+                // Extract POS n-grams from both texts
+                const ngrams1 = extractPOSNgrams(text1, n);
+                const ngrams2 = extractPOSNgrams(text2, n);
+
+                if (ngrams1.size === 0 && ngrams2.size === 0) {
+                    console.warn('POS similarity: Both texts produced 0 n-grams');
+                    return 1; // Both empty = identical
+                }
+
+                if (ngrams1.size === 0 || ngrams2.size === 0) {
+                    console.warn('POS similarity: One text produced 0 n-grams');
+                    return 0;
+                }
+
+                // Calculate Jaccard similarity
+                const intersection = new Set([...ngrams1].filter(x => ngrams2.has(x)));
+                const union = new Set([...ngrams1, ...ngrams2]);
+
+                const similarity = union.size === 0 ? 0 : intersection.size / union.size;
+
+                console.log(`POS similarity: ${intersection.size} shared / ${union.size} total = ${(similarity * 100).toFixed(1)}%`);
+
+                return similarity;
+            } catch (error) {
+                console.error('Error calculating POS similarity:', error);
+                return 0;
+            }
+        }
+
+        console.log('POS tag similarity functions loaded.');
+    </script>
+
+    <!-- Function Word Distribution Similarity -->
+    <script>
+        // Extract function words from text using Compromise.js POS tagging
+        function extractFunctionWords(text) {
+            if (!window.nlp) {
+                console.warn('Compromise.js not loaded for function word extraction');
+                return {};
+            }
+
+            try {
+                const doc = nlp(text);
+                const terms = doc.terms();
+                const functionWords = {};
+                const totalWords = terms.length;
+
+                if (totalWords === 0) return {};
+
+                // Iterate through each term and check if it's a function word
+                for (let i = 0; i < terms.length; i++) {
+                    const term = doc.terms().eq(i);
+                    const word = term.text('lower').trim();
+
+                    // Identify function words by POS tags
+                    if (term.has('#Determiner') ||
+                        term.has('#Preposition') ||
+                        term.has('#Conjunction') ||
+                        term.has('#Pronoun') ||
+                        term.has('#Modal') ||
+                        term.has('#Auxiliary')) {
+
+                        functionWords[word] = (functionWords[word] || 0) + 1;
+                    }
+                }
+
+                // Normalize by total word count
+                const frequencies = {};
+                Object.keys(functionWords).forEach(word => {
+                    frequencies[word] = functionWords[word] / totalWords;
+                });
+
+                return frequencies;
+            } catch (error) {
+                console.error('Error extracting function words:', error);
+                return {};
+            }
+        }
+
+        // Calculate frequency of function words in text (returns normalized vector)
+        function calculateFunctionWordFrequencies(text) {
+            if (!window.nlp) {
+                console.warn('Compromise.js not loaded - cannot analyze function words');
+                return {};
+            }
+
+            return extractFunctionWords(text);
+        }
+
+        // Calculate cosine similarity between function word frequency vectors
+        function functionWordDistributionSimilarity(text1, text2) {
+            if (!window.nlp) {
+                console.warn('Function word distribution: Compromise.js not loaded');
+                return 0;
+            }
+
+            const freq1 = calculateFunctionWordFrequencies(text1);
+            const freq2 = calculateFunctionWordFrequencies(text2);
+
+            // Get all unique function words from both texts
+            const allWords = new Set([...Object.keys(freq1), ...Object.keys(freq2)]);
+
+            if (allWords.size === 0) return 0;
+
+            // Calculate cosine similarity
+            let dotProduct = 0;
+            let mag1 = 0;
+            let mag2 = 0;
+
+            allWords.forEach(word => {
+                const v1 = freq1[word] || 0;
+                const v2 = freq2[word] || 0;
+                dotProduct += v1 * v2;
+                mag1 += v1 * v1;
+                mag2 += v2 * v2;
+            });
+
+            if (mag1 === 0 || mag2 === 0) return 0;
+
+            const similarity = dotProduct / (Math.sqrt(mag1) * Math.sqrt(mag2));
+
+            console.log(`Function word similarity: ${(similarity * 100).toFixed(1)}% (${allWords.size} unique function words)`);
+
+            return similarity;
+        }
+
+        console.log('Function word distribution similarity loaded (using Compromise.js NLP).');
+    </script>
+
     <script>
         let csvData = [];
         let headers = [];
@@ -1971,8 +2393,9 @@
                         document.getElementById('thresholdDisplay').textContent = savedThreshold;
                     }
 
-                    // Hide welcome screen and show app interface
+                    // Hide welcome/upload screens and show app interface
                     document.getElementById('welcomeScreen').style.display = 'none';
+                    document.getElementById('uploadPromptScreen').style.display = 'none';
                     document.getElementById('controls').style.display = 'block';
                     document.getElementById('dashboard').style.display = 'block';
 
@@ -2117,6 +2540,12 @@
             restoreSession();
             restoreMetricSettings();
 
+            // Auto-load transformer model on page load
+            console.log('Initializing Transformers.js model...');
+            initTransformers().catch(err => {
+                console.warn('Failed to auto-load transformer model:', err);
+            });
+
             // Event Listeners
             document.getElementById('csvFile').addEventListener('change', handleFileUpload);
             document.getElementById('columnSelect').addEventListener('change', async (e) => {
@@ -2164,8 +2593,9 @@
 
             currentColumn = 1;
 
-            // Hide welcome screen and show app interface
+            // Hide welcome/upload screens and show app interface
             document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('uploadPromptScreen').style.display = 'none';
             document.getElementById('controls').style.display = 'block';
             document.getElementById('dashboard').style.display = 'block';
 
@@ -2562,10 +2992,11 @@
         }
 
         // Calculate all individual metric scores for a pair of texts
-        function calculateAllMetrics(text1, text2, selectedMetrics) {
+        async function calculateAllMetrics(text1, text2, selectedMetrics) {
             const metrics = {};
 
-            selectedMetrics.forEach(metricId => {
+            // Process synchronous metrics first
+            for (const metricId of selectedMetrics) {
                 switch(metricId) {
                     case 'cosine':
                         metrics.cosine = cosineSimilarity(text1, text2);
@@ -2621,8 +3052,22 @@
                     case 'wordLevelFuzzy5':
                         metrics.wordLevelFuzzy5 = wordLevelFuzzyNgramSimilarity(text1, text2, 5, 2);
                         break;
+                    case 'transformerSemantic':
+                        // Async metric - must await
+                        if (window.transformersEnabled && window.transformerSemanticSimilarity) {
+                            metrics.transformerSemantic = await window.transformerSemanticSimilarity(text1, text2);
+                        } else {
+                            metrics.transformerSemantic = 0;
+                        }
+                        break;
+                    case 'posSyntactic':
+                        metrics.posSyntactic = posTagSequenceSimilarity(text1, text2, 3);
+                        break;
+                    case 'functionWordDist':
+                        metrics.functionWordDist = functionWordDistributionSimilarity(text1, text2);
+                        break;
                 }
-            });
+            }
 
             return metrics;
         }
@@ -2636,12 +3081,12 @@
             return (score - params.min) / (params.max - params.min);
         }
 
-        function calculateCombinedSimilarity(text1, text2) {
+        async function calculateCombinedSimilarity(text1, text2) {
             // Get selected metrics from settings
             const selected = getSelectedMetrics();
 
-            // Calculate all individual metric scores
-            const metrics = calculateAllMetrics(text1, text2, selected);
+            // Calculate all individual metric scores (await because it's now async)
+            const metrics = await calculateAllMetrics(text1, text2, selected);
 
             // Get metric weights
             const weights = getMetricWeights();
@@ -2666,7 +3111,7 @@
             const metricIds = ['cosine', 'jaccard', 'ngram', 'sentenceVariance', 'wordCount',
                               'avgSentenceLength', 'temporalBurstiness', 'pronounDensity', 'transitionWords',
                               'ngramPunctuation', 'wordNgram', 'ngram4', 'ngram5', 'ner', 'fuzzyNgram3', 'fuzzyNgram6',
-                              'wordLevelFuzzy3', 'wordLevelFuzzy5'];
+                              'wordLevelFuzzy3', 'wordLevelFuzzy5', 'transformerSemantic', 'posSyntactic', 'functionWordDist'];
             return metricIds.filter(id => {
                 const checkbox = document.getElementById('metric_' + id);
                 return checkbox && checkbox.checked;
@@ -2676,9 +3121,67 @@
         function toggleMetricSettings() {
             const modal = document.getElementById('metricSettings');
             if (modal.style.display === 'none' || modal.style.display === '') {
+                // Update button text and footer message based on CSV loaded state
+                const csvLoaded = csvData && csvData.length > 0;
+                const applyBtn = document.getElementById('metricApplyBtn');
+                const footerText = document.getElementById('metricModalFooterText');
+
+                if (applyBtn) {
+                    applyBtn.textContent = csvLoaded ? 'Apply Metrics' : 'Continue';
+                }
+                if (footerText) {
+                    footerText.textContent = csvLoaded
+                        ? 'Click "Apply Metrics" to recalculate with your selected metrics'
+                        : 'Select your metrics and click "Continue" to proceed';
+                }
+
                 modal.style.display = 'flex';
             } else {
                 modal.style.display = 'none';
+                // If CSV not loaded yet, show the upload prompt screen
+                if (!csvData || csvData.length === 0) {
+                    updateUploadPromptScreen();
+                }
+            }
+        }
+
+        function showMetricSelection() {
+            // Open metric settings modal from welcome screen
+            toggleMetricSettings();
+        }
+
+        function updateUploadPromptScreen() {
+            // Count selected metrics
+            const selectedMetrics = getSelectedMetrics();
+            const count = selectedMetrics.length;
+
+            // Update the count display
+            const countElement = document.getElementById('selectedMetricCount');
+            if (countElement) {
+                countElement.textContent = count;
+            }
+
+            // Hide welcome screen and show upload prompt
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('uploadPromptScreen').style.display = 'flex';
+
+            // If transformerSemantic is selected, start loading the model early
+            if (selectedMetrics.includes('transformerSemantic')) {
+                preloadTransformerModel();
+            }
+        }
+
+        async function preloadTransformerModel() {
+            // Start loading the Transformers.js model early
+            if (!window.transformerPipeline && typeof window.transformers !== 'undefined') {
+                console.log('Preloading Transformer model...');
+                try {
+                    const { pipeline } = window.transformers;
+                    window.transformerPipeline = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+                    console.log('Transformer model preloaded successfully');
+                } catch (error) {
+                    console.error('Error preloading Transformer model:', error);
+                }
             }
         }
 
@@ -2715,7 +3218,8 @@
             const weights = {};
             const metricIds = ['cosine', 'jaccard', 'ngram', 'sentenceVariance', 'wordCount', 'avgSentenceLength',
                               'temporalBurstiness', 'pronounDensity', 'transitionWords', 'ngramPunctuation', 'wordNgram',
-                              'ngram4', 'ngram5', 'ner', 'fuzzyNgram3', 'fuzzyNgram6', 'wordLevelFuzzy3', 'wordLevelFuzzy5'];
+                              'ngram4', 'ngram5', 'ner', 'fuzzyNgram3', 'fuzzyNgram6', 'wordLevelFuzzy3', 'wordLevelFuzzy5',
+                              'transformerSemantic', 'posSyntactic', 'functionWordDist'];
 
             metricIds.forEach(id => {
                 const slider = document.getElementById(`weight_${id}`);
@@ -2780,13 +3284,15 @@
             }
         }
 
-        function generateMetricBadges(text1, text2, combinedScore, id1, id2) {
+        async function generateMetricBadges(text1, text2, combinedScore, id1, id2) {
             // Get selected metrics to only calculate what's needed
             const selectedIds = getSelectedMetrics();
 
             // Only calculate the selected metrics
             const metricValues = {};
-            selectedIds.forEach(metricId => {
+
+            // Process metrics (including async transformer metric)
+            for (const metricId of selectedIds) {
                 switch(metricId) {
                     case 'cosine':
                         metricValues['Cosine'] = cosineSimilarity(text1, text2);
@@ -2842,8 +3348,19 @@
                     case 'wordLevelFuzzy5':
                         metricValues['Word-Level 5-Word'] = wordLevelFuzzyNgramSimilarity(text1, text2, 5, 2);
                         break;
+                    case 'transformerSemantic':
+                        metricValues['<i class="fas fa-sparkles" style="color: #ffd700;"></i> AI Semantic Similarity'] =
+                            window.transformersEnabled && window.transformerSemanticSimilarity ?
+                            await window.transformerSemanticSimilarity(text1, text2) : 0;
+                        break;
+                    case 'posSyntactic':
+                        metricValues['Syntactic Pattern'] = window.nlp ? posTagSequenceSimilarity(text1, text2, 3) : 0;
+                        break;
+                    case 'functionWordDist':
+                        metricValues['Function Word Dist'] = functionWordDistributionSimilarity(text1, text2);
+                        break;
                 }
-            });
+            }
 
             // Map metric IDs to display names
             const metricIdToName = {
@@ -2864,7 +3381,10 @@
                 'fuzzyNgram3': 'Fuzzy 3-Word Phrases',
                 'fuzzyNgram6': 'Fuzzy 6-Word Phrases',
                 'wordLevelFuzzy3': 'Word-Level 3-Word',
-                'wordLevelFuzzy5': 'Word-Level 5-Word'
+                'wordLevelFuzzy5': 'Word-Level 5-Word',
+                'transformerSemantic': '<i class="fas fa-sparkles" style="color: #ffd700;"></i> AI Semantic Similarity',
+                'posSyntactic': 'Syntactic Pattern',
+                'functionWordDist': 'Function Word Dist'
             };
 
             const metricTooltips = {
@@ -2882,10 +3402,13 @@
                 'N-gram 4-char': '4-character sequences (click to see patterns)',
                 'N-gram 5-char': '5-character sequences (click to see patterns)',
                 'Named Entity Recognition': 'Named entity similarity (people, places, organizations) - click for breakdown',
-                'Fuzzy 3-Word Phrases': 'Levenshtein ≤5 edits on 3-word phrases - catches short paraphrasing (click for details)',
-                'Fuzzy 6-Word Phrases': 'Levenshtein ≤13 edits on 6-word phrases - detects longer paraphrasing (click for details)',
-                'Word-Level 3-Word': 'Word substitutions ≤1 - detects single word changes (click for details)',
-                'Word-Level 5-Word': 'Word substitutions ≤2 - detects multi-word paraphrasing (click for details)'
+                'Fuzzy 3-Word Phrases': 'Levenshtein ≤5 edits on 3-word phrases (click for details)',
+                'Fuzzy 6-Word Phrases': 'Levenshtein ≤13 edits on 6-word phrases (click for details)',
+                'Word-Level 3-Word': 'Word substitutions ≤1 in 3-word sequences (click for details)',
+                'Word-Level 5-Word': 'Word substitutions ≤2 in 5-word sequences (click for details)',
+                '<i class="fas fa-sparkles" style="color: #ffd700;"></i> AI Semantic Similarity': 'AI-powered semantic meaning comparison using transformer neural networks (click for technical details)',
+                'Syntactic Pattern': 'Sentence structure similarity using part-of-speech patterns (click for details)',
+                'Function Word Dist': 'Function word usage patterns (the, of, and, etc.) - click for details'
             };
 
             const selectedNames = selectedIds.map(id => metricIdToName[id]).filter(n => n);
@@ -2907,20 +3430,31 @@
             // We need to store texts globally for the click handlers to access
             window.currentComparisonTexts = { text1, text2, id1, id2 };
 
-            return metrics.map(m => `
-                <div class="stat-badge" onclick='showMetricDetails("${m.name}", window.currentComparisonTexts.text1, window.currentComparisonTexts.text2, "${id1}", "${id2}")'
-                     style="cursor: pointer; transition: transform 0.2s;"
-                     onmouseover="this.style.transform='scale(1.05)'"
-                     onmouseout="this.style.transform='scale(1)'">
-                    ${m.name}: <strong>${(m.value * 100).toFixed(1)}%</strong>
-                    <span class="info-icon">?
-                        <span class="tooltip">${m.tooltip}</span>
-                    </span>
-                </div>
-            `).join('');
+            return metrics.map((m, index) => {
+                const badgeId = `metric-badge-${Date.now()}-${index}`;
+                // Store metric name in a way that avoids HTML escaping issues
+                setTimeout(() => {
+                    const badge = document.getElementById(badgeId);
+                    if (badge) {
+                        badge.onclick = () => showMetricDetails(m.name, window.currentComparisonTexts.text1, window.currentComparisonTexts.text2, id1, id2);
+                    }
+                }, 0);
+
+                return `
+                    <div id="${badgeId}" class="stat-badge"
+                         style="cursor: pointer; transition: transform 0.2s;"
+                         onmouseover="this.style.transform='scale(1.05)'"
+                         onmouseout="this.style.transform='scale(1)'">
+                        ${m.name}: <strong>${(m.value * 100).toFixed(1)}%</strong>
+                        <span class="info-icon">?
+                            <span class="tooltip">${m.tooltip}</span>
+                        </span>
+                    </div>
+                `;
+            }).join('');
         }
 
-        function showMetricDetails(metricName, text1, text2, id1, id2) {
+        async function showMetricDetails(metricName, text1, text2, id1, id2) {
             const modal = document.getElementById('calculationModal');
             const title = document.getElementById('calculationTitle');
             const body = document.getElementById('calculationBody');
@@ -2984,8 +3518,17 @@
                 case 'Word-Level 5-Word':
                     detailsHTML = generateWordLevelFuzzy5Details(text1, text2, id1, id2);
                     break;
+                case '<i class="fas fa-sparkles" style="color: #ffd700;"></i> AI Semantic Similarity':
+                    detailsHTML = await generateTransformerSemanticDetails(text1, text2, id1, id2);
+                    break;
+                case 'Syntactic Pattern':
+                    detailsHTML = generatePOSSyntacticDetails(text1, text2, id1, id2);
+                    break;
+                case 'Function Word Dist':
+                    detailsHTML = generateFunctionWordDetails(text1, text2, id1, id2);
+                    break;
                 case 'Combined':
-                    detailsHTML = generateCombinedDetails(text1, text2, id1, id2);
+                    detailsHTML = await generateCombinedDetails(text1, text2, id1, id2);
                     break;
             }
 
@@ -3239,7 +3782,7 @@
             return `
                 <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
                     <h3 style="margin: 0 0 10px 0;">N-gram 4-char Similarity (4-character sequences)</h3>
-                    <p>Uses <strong>4-character n-grams</strong> instead of 3. Longer n-grams are more specific and less likely to match by chance, making them better at detecting deliberate copying or template use.</p>
+                    <p>Uses <strong>4-character n-grams</strong> instead of 3. Longer n-grams are more specific and less likely to match by chance.</p>
                     <p style="font-family: monospace; background: white; padding: 10px; border-radius: 3px; margin: 10px 0 0 0;">
                         similarity = |shared 4-grams| / |total unique 4-grams|
                     </p>
@@ -3339,77 +3882,119 @@
         }
 
         function generateNERDetails(text1, text2, id1, id2) {
-            // Extract entities from both texts - all capitalized sequences (proper nouns)
+            const isEnabled = window.nlp !== undefined;
+
+            // Extract entities using NLP (same function as nerSimilarity)
             const extractEntities = (text) => {
                 const wordCount = tokenize(text).length;
 
-                // Extract sequences of capitalized words (proper nouns)
-                // Updated to handle mixed case like "EdTech" or "iPhone"
-                // Also handles abbreviations like "Mr. Smith", "Mt. Edna", "Rodeo Dr."
-                const properNounPattern = /\b[A-Z][A-Za-z]*\.?(?:\s+[A-Z][A-Za-z]*\.?)*\b/g;
+                if (!window.nlp) {
+                    // Fallback to simple capitalization pattern
+                    const properNounPattern = /\b[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*\b/g;
+                    const matches = text.match(properNounPattern) || [];
+                    const commonWords = new Set(['The', 'This', 'That', 'These', 'Those', 'A', 'An', 'I', 'It', 'He', 'She', 'We', 'They']);
+                    const entities = matches.filter(m => !commonWords.has(m));
+                    const uniqueEntities = [...new Set(entities)];
 
-                // Remove punctuation from the text before matching to avoid "EdTech." vs "EdTech" issues
-                const cleanText = text.replace(/([.!?;:,])/g, ' $1 ');
-                const matches = cleanText.match(properNounPattern) || [];
+                    return {
+                        entities: new Set(uniqueEntities.map(e => e.toLowerCase())),
+                        entityList: uniqueEntities,
+                        count: uniqueEntities.length,
+                        density: wordCount > 0 ? (uniqueEntities.length / wordCount) * 100 : 0,
+                        wordCount: wordCount,
+                        people: [],
+                        places: [],
+                        organizations: []
+                    };
+                }
 
-                // Filter out common sentence-starting words and single letters
-                const commonWords = new Set(['The', 'This', 'That', 'These', 'Those', 'A', 'An', 'I', 'It', 'He', 'She', 'We', 'They']);
+                try {
+                    const doc = nlp(text);
 
-                // Advanced filtering: Only include words that appear capitalized in mid-sentence positions
-                // This prevents sentence-initial capitalization from being treated as named entities
-                const sentenceBoundaryPattern = /[.!?]\s+/g;
-                const sentences = text.split(sentenceBoundaryPattern);
+                    // Extract specific entity types using Compromise.js
+                    const people = doc.people().out('array');
+                    const places = doc.places().out('array');
+                    const organizations = doc.organizations().out('array');
 
-                const validEntities = new Set();
+                    // Get proper nouns that aren't already in the above categories
+                    const properNouns = doc.match('#ProperNoun').out('array');
 
-                // Find words that appear in mid-sentence positions
-                sentences.forEach(sentence => {
-                    const sentenceMatches = sentence.match(/\b[A-Z][A-Za-z]*\.?(?:\s+[A-Z][A-Za-z]*\.?)*\b/g) || [];
+                    // Clean and filter entities
+                    const cleanEntity = (e) => e.trim().replace(/[,\.;:!?]+$/, ''); // Remove trailing punctuation
+                    const isValid = (e) => e.length > 1 && !/^[^a-zA-Z]+$/.test(e); // At least 2 chars and contains letters
 
-                    // All words after the first are mid-sentence
-                    sentenceMatches.slice(1).forEach(match => {
-                        if (match.length > 1 && !commonWords.has(match)) {
-                            validEntities.add(match);
+                    // Combine and deduplicate (case-insensitive)
+                    const allRaw = [...people, ...places, ...organizations, ...properNouns];
+                    const cleaned = allRaw.map(cleanEntity).filter(isValid);
+                    const lowerMap = new Map();
+                    cleaned.forEach(e => {
+                        const lower = e.toLowerCase();
+                        if (!lowerMap.has(lower)) {
+                            lowerMap.set(lower, e);
                         }
                     });
-                });
+                    const uniqueEntities = Array.from(lowerMap.values());
 
-                // Now filter the original matches to only include valid entities
-                const entities = matches.filter(m => validEntities.has(m));
+                    // Calculate density (per 100 words)
+                    const density = wordCount > 0 ? (uniqueEntities.length / wordCount) * 100 : 0;
 
-                // Deduplicate
-                const uniqueEntities = [...new Set(entities)];
-
-                // Calculate density (per 100 words)
-                const density = wordCount > 0 ? (uniqueEntities.length / wordCount) * 100 : 0;
-
-                return {
-                    entities: new Set(uniqueEntities.map(e => e.toLowerCase())),
-                    entityList: uniqueEntities,
-                    count: uniqueEntities.length,
-                    density: density,
-                    wordCount: wordCount
-                };
+                    return {
+                        entities: new Set(uniqueEntities.map(e => e.toLowerCase())),
+                        entityList: uniqueEntities,
+                        count: uniqueEntities.length,
+                        density: density,
+                        wordCount: wordCount,
+                        people: people.map(cleanEntity).filter(isValid),
+                        places: places.map(cleanEntity).filter(isValid),
+                        organizations: organizations.map(cleanEntity).filter(isValid)
+                    };
+                } catch (error) {
+                    console.error('Error in NLP-based NER:', error);
+                    return {
+                        entities: new Set(),
+                        entityList: [],
+                        count: 0,
+                        density: 0,
+                        wordCount: wordCount,
+                        people: [],
+                        places: [],
+                        organizations: []
+                    };
+                }
             };
 
             const entities1 = extractEntities(text1);
             const entities2 = extractEntities(text2);
 
-            // Find shared entities
+            // Find shared entities (by category)
             const sharedEntities = [...entities1.entities].filter(x => entities2.entities.has(x));
+            const sharedPeople = entities1.people.filter(p => entities2.people.map(p2 => p2.toLowerCase()).includes(p.toLowerCase()));
+            const sharedPlaces = entities1.places.filter(p => entities2.places.map(p2 => p2.toLowerCase()).includes(p.toLowerCase()));
+            const sharedOrgs = entities1.organizations.filter(o => entities2.organizations.map(o2 => o2.toLowerCase()).includes(o.toLowerCase()));
 
             const similarity = nerSimilarity(text1, text2);
 
             return `
                 <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-                    <h3 style="margin: 0 0 10px 0;">Named Entity Recognition (NER) Similarity</h3>
-                    <p>Extracts all capitalized sequences (proper nouns) from both texts and compares them. Based on MIT 2024 study showing LLM-assisted writing has distinct NER patterns (Cramer's V = 0.55 vs 0.27 for human-only).</p>
+                    <h3 style="margin: 0 0 10px 0;">Named Entity Recognition (NER) Similarity ${!isEnabled ? '(Fallback)' : '(NLP-Powered)'}</h3>
+                    <p>${isEnabled
+                        ? 'Uses Compromise.js NLP to identify and categorize named entities (people, places, organizations, proper nouns). Compares entity usage patterns between texts.'
+                        : 'Compromise.js not loaded - using basic capitalization pattern matching as fallback.'
+                    }</p>
                     <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0;">
-                        <strong>Detection Method:</strong> Extracts all capitalized word sequences (e.g., "John Smith", "New York University", "MIT")
+                        <strong>Detection Method:</strong> ${isEnabled
+                            ? 'NLP-based entity recognition identifies people (John Smith), places (New York), organizations (MIT), and proper nouns'
+                            : 'Regex pattern matching for capitalized sequences (less accurate than NLP)'
+                        }
                     </div>
                     <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0;">
                         <strong>Similarity Formula:</strong> Combines content similarity (60% weight - shared entities) with density similarity (40% weight - usage rate patterns)
                     </div>
+                    ${!isEnabled ? `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 10px 0;">
+                        <strong>Note:</strong> Compromise.js library not loaded. Using fallback regex pattern matching which is less accurate than NLP-based detection.
+                    </div>
+                    ` : ''}
                 </div>
 
                 <div style="background: #e3f2fd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
@@ -3543,12 +4128,12 @@
             return `
                 <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
                     <h3 style="margin: 0 0 10px 0;">Fuzzy 3-Word Phrase Matching (Levenshtein Distance)</h3>
-                    <p>Uses the Levenshtein distance algorithm to detect paraphrasing by finding 3-word phrases that are nearly identical with minor word substitutions. Based on MIT 2024 study's n-gram analysis approach.</p>
+                    <p>Uses the Levenshtein distance algorithm to find 3-word phrases that are similar with minor character-level edits. Based on MIT 2024 study's n-gram analysis approach.</p>
                     <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0;">
                         <strong>Algorithm:</strong> Levenshtein distance measures the minimum number of single-character edits (insertions, deletions, substitutions) needed to transform one string into another. We apply this to 3-word phrases with a maximum edit distance of ${maxDistance}.
                     </div>
                     <div style="background: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0;">
-                        <strong>Why This Matters:</strong> Catches short paraphrasing like "helping students learn" vs "aiding students learn" or "working with people" vs "working with individuals"
+                        <strong>Example:</strong> "helping students learn" vs "aiding students learn" or "working with people" vs "working with individuals"
                     </div>
                 </div>
 
@@ -3598,7 +4183,7 @@
                 ${fuzzyMatches.length > 0 ? `
                 <div style="background: #fff3e0; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
                     <h4 style="margin: 0 0 15px 0; color: #e65100;">⚡ Fuzzy Matches (${fuzzyMatches.length})</h4>
-                    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Similar phrases with edit distance ≤ ${maxDistance} (potential paraphrasing)</p>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Similar phrases with edit distance ≤ ${maxDistance}</p>
                     <div style="max-height: 400px; overflow-y: auto;">
                         ${fuzzyMatches.slice(0, 50).map(match => `
                             <div style="background: #fff8e1; padding: 10px 12px; margin: 8px 0; border-radius: 4px; border-left: 4px solid #ff9800;">
@@ -3738,7 +4323,7 @@
                 ${fuzzyMatches.length > 0 ? `
                 <div style="background: #fff3e0; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
                     <h4 style="margin: 0 0 15px 0; color: #e65100;">⚡ Fuzzy Matches (${fuzzyMatches.length})</h4>
-                    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Similar phrases with edit distance ≤ ${maxDistance} (potential paraphrasing)</p>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Similar phrases with edit distance ≤ ${maxDistance}</p>
                     <div style="max-height: 400px; overflow-y: auto;">
                         ${fuzzyMatches.slice(0, 50).map(match => `
                             <div style="background: #fff8e1; padding: 10px 12px; margin: 8px 0; border-radius: 4px; border-left: 4px solid #ff9800;">
@@ -4471,7 +5056,498 @@
             `;
         }
 
-        function generateCombinedDetails(text1, text2, id1, id2) {
+        async function generateTransformerSemanticDetails(text1, text2, id1, id2) {
+            // Calculate the similarity and get embeddings for display
+            let similarity = 0;
+            let embedding1 = null;
+            let embedding2 = null;
+            let dotProduct = 0;
+
+            if (window.transformersEnabled && window.semanticModel) {
+                // Get embeddings
+                embedding1 = await window.semanticModel(text1, { pooling: 'mean', normalize: true });
+                embedding2 = await window.semanticModel(text2, { pooling: 'mean', normalize: true });
+
+                // Calculate dot product (cosine similarity for normalized vectors)
+                dotProduct = 0;
+                for (let i = 0; i < embedding1.data.length; i++) {
+                    dotProduct += embedding1.data[i] * embedding2.data[i];
+                }
+                similarity = Math.max(0, Math.min(1, dotProduct));
+            }
+
+            const isEnabled = window.transformersEnabled;
+            const modelStatus = isEnabled ? 'Loaded & Active' : 'Not Loaded';
+
+            // Format first 10 dimensions of each vector for display
+            const formatVector = (embedding) => {
+                if (!embedding) return '[model not loaded]';
+                const values = Array.from(embedding.data).slice(0, 10);
+                return '[' + values.map(v => v.toFixed(4)).join(', ') + ', ... +374 more]';
+            };
+
+            return `
+                <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h3 style="margin: 0 0 10px 0;"><i class="fas fa-sparkles" style="color: #ffd700; margin-right: 6px;"></i>Transformer Semantic Similarity</h3>
+                    <p>Uses a transformer neural network trained on 1+ billion sentence pairs to detect when two texts mean the same thing even with completely different words.</p>
+
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 13px;">
+                        <strong>How it works:</strong>
+                        <ol style="margin: 5px 0 0 20px; padding: 0;">
+                            <li>Convert each text to a 384-dimensional vector embedding</li>
+                            <li>The model encodes semantic meaning, not just words</li>
+                            <li>Calculate cosine similarity between the two vectors</li>
+                        </ol>
+                        <p style="margin: 5px 0 0 0; font-family: monospace;">similarity = dot_product(vector1, vector2)</p>
+                    </div>
+                </div>
+
+                <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0;">Step 1: Text Input</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <strong>Respondent ${id1}:</strong><br>
+                            <div style="background: white; padding: 10px; border-radius: 3px; margin-top: 8px; font-size: 12px; max-height: 100px; overflow-y: auto;">
+                                ${escapeHtml(text1.substring(0, 200))}${text1.length > 200 ? '...' : ''}
+                            </div>
+                        </div>
+                        <div>
+                            <strong>Respondent ${id2}:</strong><br>
+                            <div style="background: white; padding: 10px; border-radius: 3px; margin-top: 8px; font-size: 12px; max-height: 100px; overflow-y: auto;">
+                                ${escapeHtml(text2.substring(0, 200))}${text2.length > 200 ? '...' : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0;">Step 2: Vector Embeddings (384 dimensions)</h4>
+                    <div style="margin-bottom: 10px;">
+                        <strong>Vector 1 (Respondent ${id1}):</strong><br>
+                        <div style="background: white; padding: 10px; border-radius: 3px; margin-top: 5px; font-family: monospace; font-size: 11px; overflow-x: auto;">
+                            ${formatVector(embedding1)}
+                        </div>
+                    </div>
+                    <div>
+                        <strong>Vector 2 (Respondent ${id2}):</strong><br>
+                        <div style="background: white; padding: 10px; border-radius: 3px; margin-top: 5px; font-family: monospace; font-size: 11px; overflow-x: auto;">
+                            ${formatVector(embedding2)}
+                        </div>
+                    </div>
+                    <p style="margin: 10px 0 0 0; font-size: 12px; color: #666;">
+                        <em>Showing first 10 of 384 dimensions. Each number represents a semantic feature learned by the AI.</em>
+                    </p>
+                </div>
+
+                <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0;">Step 3: Cosine Similarity Calculation</h4>
+                    <p style="font-size: 13px; margin-bottom: 10px;">
+                        Since the vectors are normalized (length = 1), cosine similarity = dot product:
+                    </p>
+                    <div style="background: white; padding: 15px; border-radius: 3px; font-family: monospace; font-size: 13px;">
+                        <strong>Dot Product Formula:</strong><br>
+                        similarity = Σ(vector1[i] × vector2[i]) for i = 0 to 383<br><br>
+
+                        <strong>Calculation:</strong><br>
+                        ${isEnabled ? `
+                            = (${embedding1.data[0].toFixed(4)} × ${embedding2.data[0].toFixed(4)}) +
+                              (${embedding1.data[1].toFixed(4)} × ${embedding2.data[1].toFixed(4)}) + ... (382 more)<br>
+                            = ${(embedding1.data[0] * embedding2.data[0]).toFixed(6)} +
+                              ${(embedding1.data[1] * embedding2.data[1]).toFixed(6)} + ... (382 more)<br>
+                            = <strong>${dotProduct.toFixed(6)}</strong>
+                        ` : 'Model not loaded - cannot show calculation'}
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div style="background: #e8f4f8; padding: 15px; border-radius: 5px;">
+                        <h4 style="margin: 0 0 10px 0;">Vector Dimensions</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 0;">384</p>
+                    </div>
+                    <div style="background: #d5f4e6; padding: 15px; border-radius: 5px;">
+                        <h4 style="margin: 0 0 10px 0;">Dot Product</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 0;">${isEnabled ? dotProduct.toFixed(4) : 'N/A'}</p>
+                    </div>
+                    <div style="background: #fef5e7; padding: 15px; border-radius: 5px;">
+                        <h4 style="margin: 0 0 10px 0;">Model Status</h4>
+                        <p style="font-size: 16px; font-weight: bold; margin: 0; color: ${isEnabled ? '#27ae60' : '#e74c3c'};">${modelStatus}</p>
+                    </div>
+                </div>
+
+                <div style="background: #d5f4e6; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0;">Final Result</h4>
+                    <p style="font-size: 20px; margin: 0;">
+                        Semantic Similarity = <strong>${(similarity * 100).toFixed(1)}%</strong>
+                    </p>
+                    <p style="font-size: 13px; margin: 5px 0 0 0; color: #666;">
+                        ${similarity > 0.8 ? 'Very High - Possible AI-assisted paraphrasing or copying' :
+                          similarity > 0.6 ? 'High - Significant semantic overlap' :
+                          similarity > 0.4 ? 'Moderate - Some shared concepts' :
+                          'Low - Different meanings'}
+                    </p>
+                </div>
+
+                <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0;">Semantic Similarity Detected in Your Texts</h4>
+                    ${isEnabled ? await (async () => {
+                        // Split texts into sentences
+                        const sentences1 = text1.split(/[.!?]+/).filter(s => s.trim().length > 10).map(s => s.trim());
+                        const sentences2 = text2.split(/[.!?]+/).filter(s => s.trim().length > 10).map(s => s.trim());
+
+                        // Find top similar sentence pairs
+                        const pairs = [];
+                        for (let i = 0; i < Math.min(5, sentences1.length); i++) {
+                            for (let j = 0; j < Math.min(5, sentences2.length); j++) {
+                                if (sentences1[i] && sentences2[j]) {
+                                    const sim = await window.transformerSemanticSimilarity(sentences1[i], sentences2[j]);
+                                    pairs.push({ s1: sentences1[i], s2: sentences2[j], sim });
+                                }
+                            }
+                        }
+
+                        // Sort by similarity and take top 3
+                        pairs.sort((a, b) => b.sim - a.sim);
+                        const topPairs = pairs.slice(0, 3);
+
+                        if (topPairs.length > 0 && topPairs[0].sim > 0.3) {
+                            return topPairs.map(p => `
+                                <div style="margin-bottom: 15px; padding: 10px; background: white; border-radius: 5px; border-left: 4px solid ${p.sim > 0.7 ? '#e74c3c' : p.sim > 0.5 ? '#f39c12' : '#3498db'};">
+                                    <div style="font-size: 12px; color: #666; margin-bottom: 5px;">
+                                        <strong>Similarity: ${(p.sim * 100).toFixed(1)}%</strong>
+                                        ${p.sim > 0.7 ? ' - Very High' : p.sim > 0.5 ? ' - High' : ' - Moderate'}
+                                    </div>
+                                    <div style="font-size: 13px; margin-bottom: 5px;">
+                                        <strong>Respondent ${id1}:</strong> "${escapeHtml(p.s1.substring(0, 150))}${p.s1.length > 150 ? '...' : ''}"
+                                    </div>
+                                    <div style="font-size: 13px;">
+                                        <strong>Respondent ${id2}:</strong> "${escapeHtml(p.s2.substring(0, 150))}${p.s2.length > 150 ? '...' : ''}"
+                                    </div>
+                                </div>
+                            `).join('');
+                        } else {
+                            return '<p style="font-size: 13px; color: #666;"><em>No significant semantic similarity detected between individual sentences. The overall similarity may be due to topic overlap or general writing style.</em></p>';
+                        }
+                    })() : '<p style="font-size: 13px; color: #666;"><em>Model not loaded. Examples cannot be generated.</em></p>'}
+                </div>
+
+                <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0;">Model Info</h4>
+                    <p style="margin: 0; font-size: 13px;">
+                        <strong>Model:</strong> Xenova/all-MiniLM-L6-v2<br>
+                        <strong>Vector Dimensions:</strong> 384<br>
+                        <strong>Training Data:</strong> 1B+ sentence pairs<br>
+                        <strong>Model Size:</strong> 23 MB (downloaded from CDN, cached by browser)<br>
+                        <strong>Processing Time:</strong> ~200ms per comparison
+                    </p>
+                </div>
+
+                ${!isEnabled ? `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px;">
+                        <strong>Note:</strong> The AI model is not currently loaded. Enable the transformer model in Metric Settings to calculate live semantic similarity.
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function generatePOSSyntacticDetails(text1, text2, id1, id2) {
+            // Calculate the similarity
+            const similarity = window.nlp ? posTagSequenceSimilarity(text1, text2, 3) : 0;
+            const isEnabled = window.nlp !== undefined;
+
+            // Extract POS n-grams for display
+            let ngrams1 = new Set();
+            let ngrams2 = new Set();
+            let intersection = new Set();
+            let union = new Set();
+
+            if (window.nlp) {
+                ngrams1 = extractPOSNgrams(text1, 3);
+                ngrams2 = extractPOSNgrams(text2, 3);
+                intersection = new Set([...ngrams1].filter(x => ngrams2.has(x)));
+                union = new Set([...ngrams1, ...ngrams2]);
+            }
+
+            // Sample shared and unique patterns
+            const sharedPatterns = [...intersection].slice(0, 15);
+            const uniqueToText1 = [...ngrams1].filter(x => !ngrams2.has(x)).slice(0, 10);
+            const uniqueToText2 = [...ngrams2].filter(x => !ngrams1.has(x)).slice(0, 10);
+
+            return `
+                <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h3 style="margin: 0 0 10px 0;">Syntactic Pattern Similarity</h3>
+                    <p>Measures how similarly two texts structure their sentences by analyzing part-of-speech (POS) tag sequences. This metric captures writing style independent of vocabulary.</p>
+
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 13px;">
+                        <strong>How it works:</strong>
+                        <ol style="margin: 5px 0 0 20px; padding: 0;">
+                            <li>Tag each word with its grammatical role (noun, verb, adjective, etc.)</li>
+                            <li>Extract 3-word POS sequences (e.g., "DET-ADJ-NOUN")</li>
+                            <li>Compare the sets of POS patterns between texts</li>
+                            <li>Calculate Jaccard similarity: shared patterns / total unique patterns</li>
+                        </ol>
+                        <p style="margin: 5px 0 0 0; font-family: monospace; font-size: 12px;">
+                            Example: "The quick cat" → DET-ADJ-NOUN<br>
+                            "A fast dog" → DET-ADJ-NOUN ← Same pattern, different words!
+                        </p>
+                    </div>
+
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 13px;">
+                        <strong>Jaccard Similarity Calculation:</strong>
+                        <p style="margin: 5px 0; line-height: 1.6;">
+                            Jaccard similarity measures overlap between two sets. It's calculated as:<br>
+                            <code style="background: white; padding: 2px 6px; border-radius: 3px;">Similarity = (Shared patterns) / (Total unique patterns)</code>
+                        </p>
+                        <p style="margin: 5px 0 0 0; font-family: monospace; font-size: 12px; line-height: 1.8;">
+                            <strong>Example:</strong><br>
+                            Text A patterns: {DET-NOUN-VERB, NOUN-VERB-PREP, VERB-PREP-DET}<br>
+                            Text B patterns: {DET-NOUN-VERB, NOUN-VERB-ADV, VERB-PREP-DET}<br>
+                            <br>
+                            <span style="background: #d5f4e6; padding: 2px 4px;">Shared (intersection):</span> {DET-NOUN-VERB, VERB-PREP-DET} = <strong>2 patterns</strong><br>
+                            <span style="background: #fadbd8; padding: 2px 4px;">Total unique (union):</span> {DET-NOUN-VERB, NOUN-VERB-PREP, VERB-PREP-DET, NOUN-VERB-ADV} = <strong>4 patterns</strong><br>
+                            <br>
+                            <strong>Result:</strong> 2 / 4 = <strong>0.50 or 50% similar</strong>
+                        </p>
+                    </div>
+
+                    <div style="background: #e8f4f8; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 12px;">
+                        <strong>POS Tag Key:</strong>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 5px;">
+                            <div><strong>DET</strong> = Determiner (the, a, an, this, that)</div>
+                            <div><strong>NOUN</strong> = Noun (person, place, thing, idea)</div>
+                            <div><strong>VERB</strong> = Verb (action or state of being)</div>
+                            <div><strong>ADJ</strong> = Adjective (describes nouns)</div>
+                            <div><strong>ADV</strong> = Adverb (describes verbs/adjectives)</div>
+                            <div><strong>PRON</strong> = Pronoun (I, you, he, she, it, they)</div>
+                            <div><strong>PREP</strong> = Preposition (in, on, at, to, with, of)</div>
+                            <div><strong>CONJ</strong> = Conjunction (and, or, but, because)</div>
+                            <div><strong>NUM</strong> = Number (1, 2, three, first)</div>
+                            <div><strong>OTHER</strong> = Other words or punctuation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div style="background: #e8f4f8; padding: 15px; border-radius: 5px;">
+                        <h4 style="margin: 0 0 10px 0;">Patterns in Text ${id1}</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 0;">${ngrams1.size}</p>
+                    </div>
+                    <div style="background: #fef5e7; padding: 15px; border-radius: 5px;">
+                        <h4 style="margin: 0 0 10px 0;">Patterns in Text ${id2}</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 0;">${ngrams2.size}</p>
+                    </div>
+                    <div style="background: #d5f4e6; padding: 15px; border-radius: 5px;">
+                        <h4 style="margin: 0 0 10px 0;">Shared Patterns</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 0;">${intersection.size}</p>
+                    </div>
+                    <div style="background: #fadbd8; padding: 15px; border-radius: 5px;">
+                        <h4 style="margin: 0 0 10px 0;">Total Unique</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 0;">${union.size}</p>
+                    </div>
+                </div>
+
+                <div style="background: #d5f4e6; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0;">Final Result</h4>
+                    <p style="font-size: 20px; margin: 0;">
+                        ${intersection.size} / ${union.size} = <strong>${(similarity * 100).toFixed(1)}%</strong>
+                    </p>
+                    <p style="font-size: 13px; margin: 5px 0 0 0; color: #666;">
+                        ${similarity > 0.7 ? 'Very High - Texts use very similar sentence structures' :
+                          similarity > 0.5 ? 'High - Significant overlap in grammatical patterns' :
+                          similarity > 0.3 ? 'Moderate - Some shared structural patterns' :
+                          'Low - Different writing styles'}
+                    </p>
+                </div>
+
+                ${sharedPatterns.length > 0 ? `
+                    <h4>Shared Syntactic Patterns (${Math.min(15, sharedPatterns.length)} of ${intersection.size})</h4>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px; font-family: monospace; font-size: 12px;">
+                        ${sharedPatterns.map(pattern => `<span style="background: #d5f4e6; padding: 4px 8px; margin: 3px; border-radius: 3px; display: inline-block;">${escapeHtml(pattern)}</span>`).join(' ')}
+                    </div>
+                ` : ''}
+
+                <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0;">What This Detects</h4>
+                    <p style="font-size: 13px; line-height: 1.6;">
+                        <strong>Stylistic Convergence:</strong> When multiple students use the same AI tool (like ChatGPT), their texts often share syntactic patterns even when discussing different topics. High similarity in this metric suggests similar writing style or voice.
+                    </p>
+                    <p style="font-size: 13px; line-height: 1.6;">
+                        <strong>Example:</strong> Both texts heavily use "DET-NOUN-VERB" or "DET-ADJ-ADJ-NOUN" patterns, indicating they construct sentences the same way - a signature of using the same language model.
+                    </p>
+                </div>
+
+                <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0;">Unique to Each Text</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <strong>Only in Respondent ${id1} (sample):</strong>
+                            <div style="background: white; padding: 10px; border-radius: 3px; margin-top: 5px; font-family: monospace; font-size: 11px; max-height: 100px; overflow-y: auto;">
+                                ${uniqueToText1.length > 0 ? uniqueToText1.map(p => `<div>${escapeHtml(p)}</div>`).join('') : '<em>No unique patterns in sample</em>'}
+                            </div>
+                        </div>
+                        <div>
+                            <strong>Only in Respondent ${id2} (sample):</strong>
+                            <div style="background: white; padding: 10px; border-radius: 3px; margin-top: 5px; font-family: monospace; font-size: 11px; max-height: 100px; overflow-y: auto;">
+                                ${uniqueToText2.length > 0 ? uniqueToText2.map(p => `<div>${escapeHtml(p)}</div>`).join('') : '<em>No unique patterns in sample</em>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                ${!isEnabled ? `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px;">
+                        <strong>Note:</strong> Compromise.js library not loaded. This metric requires the NLP library to analyze grammatical patterns.
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function generateFunctionWordDetails(text1, text2, id1, id2) {
+            const isEnabled = window.nlp !== undefined;
+
+            if (!isEnabled) {
+                return `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 5px;">
+                        <strong>Note:</strong> Compromise.js library not loaded. This metric requires the NLP library to identify and analyze function words through POS tagging.
+                    </div>
+                `;
+            }
+
+            // Calculate frequencies for both texts
+            const freq1 = calculateFunctionWordFrequencies(text1);
+            const freq2 = calculateFunctionWordFrequencies(text2);
+            const similarity = functionWordDistributionSimilarity(text1, text2);
+
+            // Calculate total words for context
+            const totalWords1 = tokenize(text1).length;
+            const totalWords2 = tokenize(text2).length;
+
+            // Find most frequently used function words in each text
+            const sortedFreq1 = Object.entries(freq1).sort((a, b) => b[1] - a[1]).slice(0, 15);
+            const sortedFreq2 = Object.entries(freq2).sort((a, b) => b[1] - a[1]).slice(0, 15);
+
+            // Find function words with similar usage rates (within 0.5% of each other)
+            const allFunctionWords = new Set([...Object.keys(freq1), ...Object.keys(freq2)]);
+            const similarWords = [];
+            allFunctionWords.forEach(word => {
+                const f1 = (freq1[word] || 0) * 100;
+                const f2 = (freq2[word] || 0) * 100;
+                if (Math.abs(f1 - f2) < 0.5 && f1 > 0.1) {
+                    similarWords.push({ word, freq1: f1, freq2: f2 });
+                }
+            });
+            similarWords.sort((a, b) => (b.freq1 + b.freq2) - (a.freq1 + a.freq2));
+            const topSimilar = similarWords.slice(0, 12);
+
+            return `
+                <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h3 style="margin: 0 0 10px 0;">Function Word Distribution Similarity</h3>
+                    <p>Measures how similarly two texts use "function words" - grammatical glue words like determiners, prepositions, conjunctions, and pronouns. These words reveal unconscious stylistic habits independent of topic.</p>
+
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 13px;">
+                        <strong>How it works:</strong>
+                        <ol style="margin: 5px 0 0 20px; padding: 0;">
+                            <li>Use NLP POS tagging to identify function words (determiners, prepositions, conjunctions, pronouns, auxiliaries, modals)</li>
+                            <li>Count each function word's frequency in both texts</li>
+                            <li>Normalize by total word count (get percentages)</li>
+                            <li>Create frequency vectors for both texts</li>
+                            <li>Calculate cosine similarity between vectors</li>
+                        </ol>
+                        <p style="margin: 5px 0 0 0; font-family: monospace; font-size: 12px;">
+                            Example: If Text A uses "the" 5.2% and Text B uses "the" 5.1%,<br>
+                            that's nearly identical function word usage - suspicious if repeated across all function words!
+                        </p>
+                    </div>
+
+                    <div style="background: #e8f4f8; padding: 10px; border-radius: 5px; margin: 10px 0; font-size: 12px;">
+                        <strong>Why it matters:</strong> LLMs have characteristic function word patterns that persist across different topics.
+                        When multiple students use the same AI tool, their texts converge in function word usage even when discussing different subjects.
+                        <br><br>
+                        <strong>NLP-Based Detection:</strong> Uses Compromise.js to automatically identify function words through grammatical analysis, ensuring accurate classification beyond static word lists.
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px;">
+                    <div style="background: #e8f4f8; padding: 15px; border-radius: 5px;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 13px;">Text ${id1} Words</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 0;">${totalWords1}</p>
+                    </div>
+                    <div style="background: #fef5e7; padding: 15px; border-radius: 5px;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 13px;">Text ${id2} Words</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 0;">${totalWords2}</p>
+                    </div>
+                    <div style="background: #e0e7ff; padding: 15px; border-radius: 5px;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 13px;">Function Words</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 0;">${allFunctionWords.size}</p>
+                        <p style="font-size: 11px; color: #666; margin: 5px 0 0 0;">unique detected</p>
+                    </div>
+                    <div style="background: #d5f4e6; padding: 15px; border-radius: 5px;">
+                        <h4 style="margin: 0 0 10px 0; font-size: 13px;">Similarity</h4>
+                        <p style="font-size: 24px; font-weight: bold; margin: 0;">${(similarity * 100).toFixed(1)}%</p>
+                    </div>
+                </div>
+
+                <div style="background: #d5f4e6; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0;">Interpretation</h4>
+                    <p style="font-size: 13px; margin: 0;">
+                        ${similarity > 0.9 ? '<strong>Very High:</strong> Eerily similar function word patterns - strong signal of stylistic convergence (potentially same AI tool)' :
+                          similarity > 0.8 ? '<strong>High:</strong> Significant overlap in function word usage - suggests similar writing style or voice' :
+                          similarity > 0.7 ? '<strong>Moderate-High:</strong> Notable similarity in grammatical word preferences' :
+                          similarity > 0.5 ? '<strong>Moderate:</strong> Some shared function word patterns - within normal variation' :
+                          '<strong>Low:</strong> Different stylistic patterns - texts use function words differently'}
+                    </p>
+                </div>
+
+                ${topSimilar.length > 0 ? `
+                    <h4>Function Words with Similar Usage Rates (${topSimilar.length} found)</h4>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                        <div style="display: grid; grid-template-columns: 1fr 2fr 2fr; gap: 10px; font-size: 12px;">
+                            <div style="font-weight: bold; border-bottom: 2px solid #ccc; padding-bottom: 5px;">Word</div>
+                            <div style="font-weight: bold; border-bottom: 2px solid #ccc; padding-bottom: 5px;">Text ${id1}</div>
+                            <div style="font-weight: bold; border-bottom: 2px solid #ccc; padding-bottom: 5px;">Text ${id2}</div>
+                            ${topSimilar.map(item => `
+                                <div style="font-family: monospace; background: #d5f4e6; padding: 5px; border-radius: 3px;">${escapeHtml(item.word)}</div>
+                                <div>${item.freq1.toFixed(2)}% (${Math.round(item.freq1 * totalWords1 / 100)} occurrences)</div>
+                                <div>${item.freq2.toFixed(2)}% (${Math.round(item.freq2 * totalWords2 / 100)} occurrences)</div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                <div style="background: #ecf0f1; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                    <h4 style="margin: 0 0 10px 0;">Top Function Words by Frequency</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <strong>Respondent ${id1}:</strong>
+                            <div style="background: white; padding: 10px; border-radius: 3px; margin-top: 5px; font-size: 11px; max-height: 200px; overflow-y: auto;">
+                                ${sortedFreq1.map(([word, freq]) =>
+                                    `<div style="margin: 3px 0;"><span style="font-family: monospace; background: #e8f4f8; padding: 2px 6px; border-radius: 3px;">${escapeHtml(word)}</span>: ${(freq * 100).toFixed(2)}% (${Math.round(freq * totalWords1)} times)</div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                        <div>
+                            <strong>Respondent ${id2}:</strong>
+                            <div style="background: white; padding: 10px; border-radius: 3px; margin-top: 5px; font-size: 11px; max-height: 200px; overflow-y: auto;">
+                                ${sortedFreq2.map(([word, freq]) =>
+                                    `<div style="margin: 3px 0;"><span style="font-family: monospace; background: #fef5e7; padding: 2px 6px; border-radius: 3px;">${escapeHtml(word)}</span>: ${(freq * 100).toFixed(2)}% (${Math.round(freq * totalWords2)} times)</div>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #ecf0f1; padding: 15px; border-radius: 5px;">
+                    <h4 style="margin: 0 0 10px 0;">What This Detects</h4>
+                    <p style="font-size: 13px; line-height: 1.6;">
+                        <strong>Stylistic Convergence:</strong> When students use the same AI tool, their texts often share function word distribution patterns even when discussing completely different topics. High similarity in this metric is a strong signal of AI-generated content convergence.
+                    </p>
+                    <p style="font-size: 13px; line-height: 1.6;">
+                        <strong>Example:</strong> Two essays about different subjects both use "the" at 5.1%, "of" at 3.2%, "and" at 2.8%, "to" at 2.5%, etc. - such precise alignment across dozens of function words is statistically improbable for independent human writers.
+                    </p>
+                </div>
+            `;
+        }
+
+        async function generateCombinedDetails(text1, text2, id1, id2) {
             const selected = getSelectedMetrics();
 
             // Calculate all metrics (raw scores for display)
@@ -4494,7 +5570,9 @@
                 fuzzyNgram3: fuzzyNgramSimilarity(text1, text2, 3, 5),
                 fuzzyNgram6: fuzzyNgramSimilarity(text1, text2, 6, 13),
                 wordLevelFuzzy3: wordLevelFuzzyNgramSimilarity(text1, text2, 3, 1),
-                wordLevelFuzzy5: wordLevelFuzzyNgramSimilarity(text1, text2, 5, 2)
+                wordLevelFuzzy5: wordLevelFuzzyNgramSimilarity(text1, text2, 5, 2),
+                transformerSemantic: window.transformersEnabled && window.transformerSemanticSimilarity ?
+                    await window.transformerSemanticSimilarity(text1, text2) : 0
             };
 
             const metricNames = {
@@ -4516,7 +5594,8 @@
                 fuzzyNgram3: 'Fuzzy 3-Word',
                 fuzzyNgram6: 'Fuzzy 6-Word',
                 wordLevelFuzzy3: 'Word-Level 3-Word',
-                wordLevelFuzzy5: 'Word-Level 5-Word'
+                wordLevelFuzzy5: 'Word-Level 5-Word',
+                transformerSemantic: '<i class="fas fa-sparkles" style="color: #ffd700;"></i> AI Semantic Similarity'
             };
 
             // Find the actual pair in allSimilarityPairs to get the pre-calculated combined similarity
@@ -4530,7 +5609,7 @@
                 combined = actualPair.similarity;
             } else {
                 // Fallback: calculate it (shouldn't normally happen)
-                combined = calculateCombinedSimilarity(text1, text2);
+                combined = await calculateCombinedSimilarity(text1, text2);
             }
 
             const count = selected.length;
@@ -4841,57 +5920,84 @@
         }
 
         function nerSimilarity(text1, text2) {
-            // Extract named entities - all capitalized sequences (proper nouns)
+            // Extract named entities using Compromise.js NLP
             const extractEntities = (text) => {
                 const wordCount = tokenize(text).length;
 
-                // Extract sequences of capitalized words (proper nouns)
-                // Matches: "John Smith", "New York University", "MIT", "EdTech", etc.
-                // Updated to handle mixed case like "EdTech" or "iPhone"
-                const properNounPattern = /\b[A-Z][A-Za-z]*(?:\s+[A-Z][A-Za-z]*)*\b/g;
+                if (!window.nlp) {
+                    console.warn('NER: Compromise.js not loaded, using fallback');
+                    // Fallback to simple capitalization pattern
+                    const properNounPattern = /\b[A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)*\b/g;
+                    const matches = text.match(properNounPattern) || [];
+                    const commonWords = new Set(['The', 'This', 'That', 'These', 'Those', 'A', 'An', 'I', 'It', 'He', 'She', 'We', 'They']);
+                    const entities = matches.filter(m => !commonWords.has(m));
+                    const uniqueEntities = [...new Set(entities)];
 
-                // Remove punctuation from the text before matching to avoid "EdTech." vs "EdTech" issues
-                const cleanText = text.replace(/([.!?;:,])/g, ' $1 ');
-                const matches = cleanText.match(properNounPattern) || [];
+                    return {
+                        entities: new Set(uniqueEntities.map(e => e.toLowerCase())),
+                        entityList: uniqueEntities,
+                        count: uniqueEntities.length,
+                        density: wordCount > 0 ? (uniqueEntities.length / wordCount) * 100 : 0,
+                        wordCount: wordCount,
+                        people: [],
+                        places: [],
+                        organizations: []
+                    };
+                }
 
-                // Filter out common sentence-starting words and single letters
-                const commonWords = new Set(['The', 'This', 'That', 'These', 'Those', 'A', 'An', 'I', 'It', 'He', 'She', 'We', 'They']);
+                try {
+                    const doc = nlp(text);
 
-                // Advanced filtering: Only include words that appear capitalized in mid-sentence positions
-                // This prevents sentence-initial capitalization from being treated as named entities
-                const sentenceBoundaryPattern = /[.!?]\s+/g;
-                const sentences = text.split(sentenceBoundaryPattern);
+                    // Extract specific entity types using Compromise.js
+                    const people = doc.people().out('array');
+                    const places = doc.places().out('array');
+                    const organizations = doc.organizations().out('array');
 
-                const validEntities = new Set();
+                    // Get proper nouns that aren't already in the above categories
+                    const properNouns = doc.match('#ProperNoun').out('array');
 
-                // Find words that appear in mid-sentence positions
-                sentences.forEach(sentence => {
-                    const sentenceMatches = sentence.match(/\b[A-Z][A-Za-z]*(?:\s+[A-Z][A-Za-z]*)*\b/g) || [];
+                    // Clean and filter entities
+                    const cleanEntity = (e) => e.trim().replace(/[,\.;:!?]+$/, ''); // Remove trailing punctuation
+                    const isValid = (e) => e.length > 1 && !/^[^a-zA-Z]+$/.test(e); // At least 2 chars and contains letters
 
-                    // All words after the first are mid-sentence
-                    sentenceMatches.slice(1).forEach(match => {
-                        if (match.length > 1 && !commonWords.has(match)) {
-                            validEntities.add(match);
+                    // Combine and deduplicate (case-insensitive)
+                    const allRaw = [...people, ...places, ...organizations, ...properNouns];
+                    const cleaned = allRaw.map(cleanEntity).filter(isValid);
+                    const lowerMap = new Map();
+                    cleaned.forEach(e => {
+                        const lower = e.toLowerCase();
+                        if (!lowerMap.has(lower)) {
+                            lowerMap.set(lower, e);
                         }
                     });
-                });
+                    const uniqueEntities = Array.from(lowerMap.values());
 
-                // Now filter the original matches to only include valid entities
-                const entities = matches.filter(m => validEntities.has(m));
+                    // Calculate density (per 100 words)
+                    const density = wordCount > 0 ? (uniqueEntities.length / wordCount) * 100 : 0;
 
-                // Deduplicate
-                const uniqueEntities = [...new Set(entities)];
-
-                // Calculate density (per 100 words)
-                const density = wordCount > 0 ? (uniqueEntities.length / wordCount) * 100 : 0;
-
-                return {
-                    entities: new Set(uniqueEntities.map(e => e.toLowerCase())),
-                    entityList: uniqueEntities,
-                    count: uniqueEntities.length,
-                    density: density,
-                    wordCount: wordCount
-                };
+                    return {
+                        entities: new Set(uniqueEntities.map(e => e.toLowerCase())),
+                        entityList: uniqueEntities,
+                        count: uniqueEntities.length,
+                        density: density,
+                        wordCount: wordCount,
+                        people: people.map(cleanEntity).filter(isValid),
+                        places: places.map(cleanEntity).filter(isValid),
+                        organizations: organizations.map(cleanEntity).filter(isValid)
+                    };
+                } catch (error) {
+                    console.error('Error in NLP-based NER:', error);
+                    return {
+                        entities: new Set(),
+                        entityList: [],
+                        count: 0,
+                        density: 0,
+                        wordCount: wordCount,
+                        people: [],
+                        places: [],
+                        organizations: []
+                    };
+                }
             };
 
             const entities1 = extractEntities(text1);
@@ -5551,6 +6657,8 @@
                     return (mag1 === 0 || mag2 === 0) ? 0 : dotProduct / (Math.sqrt(mag1) * Math.sqrt(mag2));
                 }
 
+                // Function word distribution - requires Compromise.js, calculated in main thread
+
                 function jaccardSimilarity(text1, text2) {
                     const set1 = new Set(tokenize(text1));
                     const set2 = new Set(tokenize(text2));
@@ -6020,6 +7128,18 @@
                                 case 'wordLevelFuzzy5':
                                     metrics.wordLevelFuzzy5 = wordLevelFuzzyNgramSimilarity(pair.text1, pair.text2, 5, 2);
                                     break;
+                                case 'transformerSemantic':
+                                    // Transformer metric cannot run in worker - will be calculated in main thread
+                                    metrics.transformerSemantic = 0;
+                                    break;
+                                case 'posSyntactic':
+                                    // POS metric cannot run in worker - will be calculated in main thread
+                                    metrics.posSyntactic = 0;
+                                    break;
+                                case 'functionWordDist':
+                                    // Function word metric cannot run in worker - will be calculated in main thread
+                                    metrics.functionWordDist = 0;
+                                    break;
                             }
                         });
 
@@ -6190,6 +7310,105 @@
                 analysisIsRunning = false;
                 cancelRequested = false;
                 return;
+            }
+
+            // PHASE 1.5: Calculate transformer semantic similarity (if selected)
+            // This must run in main thread because AI model can't run in Web Workers
+            if (selectedMetrics.includes('transformerSemantic') && window.transformersEnabled && window.transformerSemanticSimilarity) {
+                updateProgress(0, pairMetrics.length, 'Calculating AI semantic similarity...', 'This may take a moment...');
+                await sleep(0);
+
+                for (let i = 0; i < pairMetrics.length; i++) {
+                    if (cancelRequested) {
+                        hideProgress();
+                        analysisIsRunning = false;
+                        cancelRequested = false;
+                        alert('Analysis cancelled by user.');
+                        return;
+                    }
+
+                    const pair = pairMetrics[i];
+                    try {
+                        pair.metrics.transformerSemantic = await window.transformerSemanticSimilarity(pair.text1, pair.text2);
+                    } catch (error) {
+                        console.error('Error calculating transformer similarity for pair:', error);
+                        pair.metrics.transformerSemantic = 0;
+                    }
+
+                    // Update progress every 10 pairs
+                    if (i % 10 === 0 || i === pairMetrics.length - 1) {
+                        updateProgress(i + 1, pairMetrics.length,
+                            `Calculating AI semantic similarity... (${i + 1}/${pairMetrics.length})`,
+                            'This may take a moment...');
+                        await sleep(0);
+                    }
+                }
+            }
+
+            // PHASE 1.6: Calculate POS syntactic similarity (if selected)
+            // This must run in main thread because Compromise.js can't run in Web Workers
+            if (selectedMetrics.includes('posSyntactic') && window.nlp) {
+                updateProgress(0, pairMetrics.length, 'Calculating syntactic patterns...', 'Analyzing sentence structures...');
+                await sleep(0);
+
+                for (let i = 0; i < pairMetrics.length; i++) {
+                    if (cancelRequested) {
+                        hideProgress();
+                        analysisIsRunning = false;
+                        cancelRequested = false;
+                        alert('Analysis cancelled by user.');
+                        return;
+                    }
+
+                    const pair = pairMetrics[i];
+                    try {
+                        pair.metrics.posSyntactic = posTagSequenceSimilarity(pair.text1, pair.text2, 3);
+                    } catch (error) {
+                        console.error('Error calculating POS similarity for pair:', error);
+                        pair.metrics.posSyntactic = 0;
+                    }
+
+                    // Update progress every 10 pairs
+                    if (i % 10 === 0 || i === pairMetrics.length - 1) {
+                        updateProgress(i + 1, pairMetrics.length,
+                            `Calculating syntactic patterns... (${i + 1}/${pairMetrics.length})`,
+                            'Analyzing sentence structures...');
+                        await sleep(0);
+                    }
+                }
+            }
+
+            // PHASE 1.7: Calculate function word distribution similarity (if selected)
+            // This must run in main thread because Compromise.js can't run in Web Workers
+            if (selectedMetrics.includes('functionWordDist') && window.nlp) {
+                updateProgress(0, pairMetrics.length, 'Analyzing function word patterns...', 'Detecting stylistic convergence...');
+                await sleep(0);
+
+                for (let i = 0; i < pairMetrics.length; i++) {
+                    if (cancelRequested) {
+                        hideProgress();
+                        analysisIsRunning = false;
+                        cancelRequested = false;
+                        alert('Analysis cancelled by user.');
+                        return;
+                    }
+
+                    const pair = pairMetrics[i];
+                    try {
+                        pair.metrics.functionWordDist = functionWordDistributionSimilarity(pair.text1, pair.text2);
+                    } catch (error) {
+                        console.error('Error calculating function word distribution for pair:', error);
+                        pair.metrics.functionWordDist = 0;
+                    }
+
+                    // Update progress every 10 pairs
+                    if (i % 10 === 0 || i === pairMetrics.length - 1) {
+                        updateProgress(i + 1, pairMetrics.length,
+                            `Analyzing function word patterns... (${i + 1}/${pairMetrics.length})`,
+                            'Detecting stylistic convergence...');
+                        await sleep(0);
+                    }
+                }
             }
 
             // PHASE 2: Calculate normalization parameters (min/max for each metric)
@@ -6562,7 +7781,7 @@
             }, 10); // Small delay to ensure spinner shows
         }
 
-        function renderCurrentMatch() {
+        async function renderCurrentMatch() {
             if (!currentRespondent || currentRespondentMatches.length === 0) return;
 
             const modal = document.getElementById('comparisonModal');
@@ -6579,11 +7798,14 @@
             const highlighted1 = highlightSharedPhrases(currentRespondent.text, sharedPhrases);
             const highlighted2 = highlightSharedPhrases(match.text, sharedPhrases);
 
+            // Generate metric badges (await since it's now async)
+            const metricBadges = await generateMetricBadges(currentRespondent.text, match.text, match.similarity, currentRespondent.id, match.id);
+
             title.textContent = `Respondent ${currentRespondent.id} vs ${match.id} (${currentMatchIndex + 1} of ${currentRespondentMatches.length})`;
 
             body.innerHTML = `
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 15px;">
-                    ${generateMetricBadges(currentRespondent.text, match.text, match.similarity, currentRespondent.id, match.id)}
+                    ${metricBadges}
                 </div>
 
                 <div class="comparison-grid">
@@ -6642,7 +7864,7 @@
             }
         }
 
-        function showPairComparison(pair) {
+        async function showPairComparison(pair) {
             const modal = document.getElementById('comparisonModal');
             const title = document.getElementById('modalTitle');
             const body = document.getElementById('modalBody');
@@ -6659,9 +7881,12 @@
             const highlighted1 = highlightSharedPhrases(pair.text1, sharedPhrases);
             const highlighted2 = highlightSharedPhrases(pair.text2, sharedPhrases);
 
+            // Generate metric badges (await since it's now async)
+            const metricBadges = await generateMetricBadges(pair.text1, pair.text2, pair.similarity, pair.id1, pair.id2);
+
             body.innerHTML = `
                 <div style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center;">
-                    ${generateMetricBadges(pair.text1, pair.text2, pair.similarity, pair.id1, pair.id2)}
+                    ${metricBadges}
                 </div>
 
                 <div class="comparison-grid">
